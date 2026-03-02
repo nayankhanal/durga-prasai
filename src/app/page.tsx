@@ -202,7 +202,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm font-black text-white bg-pink-500 hover:bg-pink-400 py-3 px-6 rounded-full border-4 border-slate-900 shadow-[4px_4px_0_rgba(15,23,42,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none transition-all"
               >
-                🥟 BUY ME MOMO
+                🥟 BUY MOMO FOR DURGA DAA
               </a>
             </div>
 
