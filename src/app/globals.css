@@ -1,11 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-background: #fff8e7;
+  --color-foreground: #0f172a;
+
+  --animate-shimmer: shimmer 2s infinite linear;
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
 
 @layer base {
   body {
-    background-color: #050505;
-    color: #ffffff;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
     overflow-x: hidden;
   }
 }
