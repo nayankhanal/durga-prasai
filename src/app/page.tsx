@@ -9,6 +9,8 @@ import {
   DramaticRefresh,
   ShareFeature
 } from '@/components/ui/StatusWidgets'
+import { VotingSection } from '@/components/ui/VotingSection'
+import { AudioPlayer } from '@/components/ui/AudioPlayer'
 import { AppData } from '@/lib/db'
 import Link from 'next/link'
 
@@ -109,7 +111,31 @@ export default function Home() {
                 alt="Durga Prasain"
                 className="w-full h-full rounded-full object-cover object-top mx-auto border-8 border-white shadow-[8px_8px_0_rgba(0,0,0,0.1)] relative z-10 bg-pink-100"
               />
-              <div className="absolute -bottom-4 -right-4 text-6xl z-20 hover:animate-spin origin-center cursor-pointer">
+              <div
+                className="absolute -bottom-4 -right-4 text-6xl z-20 hover:animate-spin origin-center cursor-pointer"
+                onMouseEnter={() => {
+                  try {
+                    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+                    const osc = ctx.createOscillator()
+                    const gain = ctx.createGain()
+                    osc.connect(gain)
+                    gain.connect(ctx.destination)
+                    gain.gain.value = 0.15
+                    osc.type = 'sawtooth'
+                    // Siren sweep up and down
+                    const now = ctx.currentTime
+                    osc.frequency.setValueAtTime(400, now)
+                    osc.frequency.linearRampToValueAtTime(800, now + 0.3)
+                    osc.frequency.linearRampToValueAtTime(400, now + 0.6)
+                    osc.frequency.linearRampToValueAtTime(800, now + 0.9)
+                    osc.frequency.linearRampToValueAtTime(400, now + 1.2)
+                    gain.gain.setValueAtTime(0.15, now)
+                    gain.gain.linearRampToValueAtTime(0, now + 1.3)
+                    osc.start(now)
+                    osc.stop(now + 1.3)
+                  } catch { }
+                }}
+              >
                 🚨
               </div>
             </div>
@@ -187,6 +213,27 @@ export default function Home() {
               <Counters arrestCount={data.arrestCount} releaseCount={data.releaseCount} />
             </motion.div>
           </div>
+
+          {/* AUDIO PLAYER SECTION */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", bounce: 0.4 }}
+          >
+            <AudioPlayer />
+          </motion.div>
+
+          {/* VOTING SECTION */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", bounce: 0.4 }}
+          >
+            <VotingSection />
+          </motion.div>
+
 
           <motion.div
             initial={{ opacity: 0 }}

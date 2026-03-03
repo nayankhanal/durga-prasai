@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { AppData, StatusType } from '@/lib/db'
 import Link from 'next/link'
-import { Save, LogOut } from 'lucide-react'
+import { Save, LogOut, Trash2, RotateCcw, Volume2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default function AdminPage() {
@@ -13,6 +13,10 @@ export default function AdminPage() {
     const [errorMsg, setErrorMsg] = useState('')
     const [successMsg, setSuccessMsg] = useState('')
     const [formData, setFormData] = useState<Partial<AppData>>({})
+
+    // Confirmation dialogs
+    const [confirmAction, setConfirmAction] = useState<string | null>(null)
+    const [actionLoading, setActionLoading] = useState(false)
 
     // Fetch current data once authenticated
     useEffect(() => {
@@ -74,6 +78,42 @@ export default function AdminPage() {
             setErrorMsg(err.message || 'An error occurred')
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleAdminAction = async (endpoint: string, label: string) => {
+        if (confirmAction !== endpoint) {
+            setConfirmAction(endpoint)
+            return
+        }
+
+        setActionLoading(true)
+        setErrorMsg('')
+        setSuccessMsg('')
+
+        try {
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password }),
+            })
+
+            if (!res.ok) {
+                if (res.status === 401) {
+                    setIsAuthenticated(false)
+                    setPassword('')
+                    throw new Error('Invalid Password')
+                }
+                throw new Error(`Failed to ${label}`)
+            }
+
+            setSuccessMsg(`${label} — Done! ✅`)
+            setTimeout(() => setSuccessMsg(''), 3000)
+        } catch (err: any) {
+            setErrorMsg(err.message || 'An error occurred')
+        } finally {
+            setActionLoading(false)
+            setConfirmAction(null)
         }
     }
 
@@ -242,6 +282,77 @@ export default function AdminPage() {
 
                     </form>
                 )}
+
+                {/* ═══════════════════════════════════════════════ */}
+                {/* DANGER ZONE — Admin Actions                   */}
+                {/* ═══════════════════════════════════════════════ */}
+                <div className="mt-16 space-y-6">
+                    <h2 className="text-2xl font-black uppercase tracking-widest text-red-600 border-b-4 border-dashed border-red-300 pb-4">
+                        ☢️ Danger Zone
+                    </h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Clear Chat */}
+                        <button
+                            onClick={() => handleAdminAction('/api/admin/clear-chat', 'Clear Chat')}
+                            disabled={actionLoading}
+                            className={cn(
+                                "flex flex-col items-center gap-3 py-6 px-4 rounded-2xl border-4 font-black uppercase transition-all",
+                                confirmAction === '/api/admin/clear-chat'
+                                    ? "bg-red-500 border-red-700 text-white shadow-[4px_4px_0_rgba(153,27,27,1)] animate-pulse"
+                                    : "bg-red-100 border-red-300 text-red-700 hover:bg-red-200 hover:-translate-y-1 hover:shadow-[4px_4px_0_rgba(153,27,27,0.3)]",
+                                actionLoading && "opacity-50 cursor-not-allowed"
+                            )}
+                        >
+                            <Trash2 className="w-8 h-8" />
+                            <span className="text-sm">
+                                {confirmAction === '/api/admin/clear-chat' ? '⚠️ Click again to confirm!' : 'Clear All Chat'}
+                            </span>
+                        </button>
+
+                        {/* Reset Votes */}
+                        <button
+                            onClick={() => handleAdminAction('/api/admin/reset-votes', 'Reset Votes')}
+                            disabled={actionLoading}
+                            className={cn(
+                                "flex flex-col items-center gap-3 py-6 px-4 rounded-2xl border-4 font-black uppercase transition-all",
+                                confirmAction === '/api/admin/reset-votes'
+                                    ? "bg-red-500 border-red-700 text-white shadow-[4px_4px_0_rgba(153,27,27,1)] animate-pulse"
+                                    : "bg-red-100 border-red-300 text-red-700 hover:bg-red-200 hover:-translate-y-1 hover:shadow-[4px_4px_0_rgba(153,27,27,0.3)]",
+                                actionLoading && "opacity-50 cursor-not-allowed"
+                            )}
+                        >
+                            <RotateCcw className="w-8 h-8" />
+                            <span className="text-sm">
+                                {confirmAction === '/api/admin/reset-votes' ? '⚠️ Click again to confirm!' : 'Reset All Votes'}
+                            </span>
+                        </button>
+
+                        {/* Reset Audio */}
+                        <button
+                            onClick={() => handleAdminAction('/api/admin/reset-audio', 'Reset Audio Counter')}
+                            disabled={actionLoading}
+                            className={cn(
+                                "flex flex-col items-center gap-3 py-6 px-4 rounded-2xl border-4 font-black uppercase transition-all",
+                                confirmAction === '/api/admin/reset-audio'
+                                    ? "bg-red-500 border-red-700 text-white shadow-[4px_4px_0_rgba(153,27,27,1)] animate-pulse"
+                                    : "bg-red-100 border-red-300 text-red-700 hover:bg-red-200 hover:-translate-y-1 hover:shadow-[4px_4px_0_rgba(153,27,27,0.3)]",
+                                actionLoading && "opacity-50 cursor-not-allowed"
+                            )}
+                        >
+                            <Volume2 className="w-8 h-8" />
+                            <span className="text-sm">
+                                {confirmAction === '/api/admin/reset-audio' ? '⚠️ Click again to confirm!' : 'Reset Audio Counter'}
+                            </span>
+                        </button>
+                    </div>
+
+                    {confirmAction && (
+                        <p className="text-xs text-red-500 font-bold text-center animate-pulse">
+                            ⚠️ Click the button again to confirm. This action cannot be undone.
+                        </p>
+                    )}
+                </div>
 
                 <div className="mt-16 text-center">
                     <Link href="/" className="text-sm font-bold text-slate-500 hover:text-pink-500 underline uppercase transition-colors">Return to Safety</Link>

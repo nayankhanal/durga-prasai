@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { FloatingChatWrapper } from "@/components/ui/FloatingChatWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
         <div className="flex-1 flex flex-col relative z-10 w-full overflow-x-hidden">
           {children}
         </div>
+        <FloatingChatWrapper />
         <footer className="w-full py-8 text-center border-t-4 border-dashed border-red-300 bg-yellow-300 backdrop-blur-md mt-auto relative z-20 space-y-4">
           <p className="text-red-600 font-bold uppercase tracking-widest flex flex-col items-center justify-center gap-2">
             <span className="text-2xl pt-2">🤡</span>
