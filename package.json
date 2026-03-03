@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "rm -rf .next && prisma generate && next build",
+    "build": "rm -rf node_modules/@prisma node_modules/.prisma .next && npm install && prisma generate && next build",
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint"
