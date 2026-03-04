@@ -1,10 +1,5 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  outputFileTracingIncludes: {
-    '/api/**/*': ['./node_modules/**/*.so.node'],
-  },
-};
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
-// module.exports = nextConfig;
