@@ -19,11 +19,11 @@ export interface HistoryEntry {
 }
 
 const DEFAULT_DATA: AppData = {
-    status: 'YES',
-    note: 'Arrested by Bhaktapur district police on charges of disturbing public peace (March 1, 2026).',
-    probability: 99,
+    status: 'NO',
+    note: 'Released from police custody (March 6, 2026).',
+    probability: 5,
     arrestCount: 14,
-    releaseCount: 13,
+    releaseCount: 14,
     lastUpdated: new Date().toISOString(),
 }
 
