@@ -42,11 +42,26 @@ export default function AdminPage() {
         }
     }, [isAuthenticated])
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (password) {
+        setLoading(true)
+        setErrorMsg('')
+        try {
+            const res = await fetch('/api/verify-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password }),
+            })
+            if (!res.ok) {
+                setErrorMsg('Wrong password! Try again 🙅')
+                setPassword('')
+                return
+            }
             setIsAuthenticated(true)
-            setErrorMsg('')
+        } catch {
+            setErrorMsg('Something went wrong. Try again.')
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -140,9 +155,10 @@ export default function AdminPage() {
                         {errorMsg && <p className="text-red-500 font-mono text-sm">{errorMsg}</p>}
                         <button
                             type="submit"
-                            className="w-full bg-yellow-400 text-slate-900 border-4 border-slate-900 rounded-xl shadow-[4px_4px_0_rgba(15,23,42,1)] font-black uppercase py-4 hover:-translate-y-1 hover:shadow-[6px_6px_0_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none transition-all"
+                            disabled={loading}
+                            className="w-full bg-yellow-400 text-slate-900 border-4 border-slate-900 rounded-xl shadow-[4px_4px_0_rgba(15,23,42,1)] font-black uppercase py-4 hover:-translate-y-1 hover:shadow-[6px_6px_0_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Let me in! 🚪
+                            {loading ? 'Checking... 🔍' : 'Let me in! 🚪'}
                         </button>
                     </form>
                     <div className="mt-8 text-center flex justify-center">
